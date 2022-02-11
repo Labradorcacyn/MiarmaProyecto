@@ -1,8 +1,7 @@
 package com.miarma.cynthia.security;
 
-
+import com.miarma.cynthia.security.jwt.JwtAuthorizationFilter;
 import com.salesianostriana.dam.security.jwt.JwtAccessDeniedHandler;
-import com.salesianostriana.dam.security.jwt.JwtAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

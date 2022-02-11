@@ -1,5 +1,6 @@
 package com.miarma.cynthia.users.services;
 
+import com.miarma.cynthia.services.base.BaseService;
 import com.miarma.cynthia.users.dto.CreateUserDto;
 import com.miarma.cynthia.users.model.UserEntity;
 import com.miarma.cynthia.users.model.UserRole;
@@ -21,10 +22,9 @@ public class UserEntityService extends BaseService<UserEntity, UUID, UserEntityR
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return this.repositorio.findFirstByEmail(email)
+        return this.repository.findFirstByEmail(email)
                 .orElseThrow(()-> new UsernameNotFoundException(email + " no encontrado"));
     }
-
 
     // Este método lo mejoraremos en el próximo tema
     public UserEntity save(CreateUserDto newUser) {
@@ -34,6 +34,7 @@ public class UserEntityService extends BaseService<UserEntity, UUID, UserEntityR
                     .avatar(newUser.getAvatar())
                     .fullName(newUser.getFullname())
                     .email(newUser.getEmail())
+                    .isPrivate(newUser.getIsPrivate())
                     .role(UserRole.USER)
                     .build();
             return save(userEntity);

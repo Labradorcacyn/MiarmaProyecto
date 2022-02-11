@@ -63,6 +63,8 @@ public class UserEntity implements UserDetails {
 
     private String fullName;
 
+    private Boolean isPrivate;
+
     @Enumerated(EnumType.STRING)
     private UserRole role;
 

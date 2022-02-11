@@ -14,7 +14,9 @@ public class GetUserDto {
     private String avatar;
     private String fullName;
     private String email;
+    private Boolean isPrivate;
     private String role;
+
 
 
 }

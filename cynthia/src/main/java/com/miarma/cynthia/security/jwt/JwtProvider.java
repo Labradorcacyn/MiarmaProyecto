@@ -1,6 +1,6 @@
-package com.salesianostriana.dam.security.jwt;
+package com.miarma.cynthia.security.jwt;
 
-import com.salesianostriana.dam.users.model.UserEntity;
+import com.miarma.cynthia.users.model.UserEntity;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -61,13 +61,6 @@ public class JwtProvider {
 
     }
 
-    /*public Long getUserIdFromJwt(String token) {
-
-        return Long.valueOf(parser.parseClaimsJws(token).getBody().getSubject());
-
-
-    }
-     */
     public UUID getUserIdFromJwt(String token) {
         return UUID.fromString(parser.parseClaimsJws(token).getBody().getSubject());
     }

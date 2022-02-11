@@ -11,6 +11,7 @@ public class UserDtoConverter {
                 .avatar(user.getAvatar())
                 .fullName(user.getFullName())
                 .email(user.getEmail())
+                .isPrivate(user.getIsPrivate())
                 .role(user.getRole().name())
                 .build();
 

@@ -1,7 +1,6 @@
 package com.miarma.cynthia.config.audit;
 
-
-import com.salesianostriana.dam.users.model.UserEntity;
+import com.miarma.cynthia.users.model.UserEntity;
 import lombok.extern.java.Log;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;

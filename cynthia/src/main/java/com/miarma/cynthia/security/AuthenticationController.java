@@ -2,8 +2,8 @@ package com.miarma.cynthia.security;
 
 import com.miarma.cynthia.security.dto.JwtUserResponse;
 import com.miarma.cynthia.security.dto.LoginDto;
+import com.miarma.cynthia.security.jwt.JwtProvider;
 import com.miarma.cynthia.users.model.UserEntity;
-import com.salesianostriana.dam.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
