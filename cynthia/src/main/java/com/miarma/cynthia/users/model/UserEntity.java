@@ -1,19 +1,12 @@
 package com.miarma.cynthia.users.model;
 
-
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.NaturalId;
@@ -65,8 +58,16 @@ public class UserEntity implements UserDetails {
 
     private Boolean isPrivate;
 
+    private Date birthday;
+
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    @OneToMany
+    private List<UserEntity> followers;
+
+    @OneToMany
+    private List<UserEntity> request;
 
     @CreatedDate
     private LocalDateTime createdAt;

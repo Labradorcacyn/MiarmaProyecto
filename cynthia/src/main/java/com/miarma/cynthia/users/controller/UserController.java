@@ -42,19 +42,14 @@ public class UserController {
                 );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
         String jwt = jwtProvider.generateToken(authentication);
-
-
         UserEntity user = (UserEntity) authentication.getPrincipal();
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(convertUserToJwtUserResponse(user, jwt));
-
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> me(@AuthenticationPrincipal UserEntity user){
+    public ResponseEntity<?>me(@AuthenticationPrincipal UserEntity user){
         return ResponseEntity.ok(convertUserToJwtUserResponse(user, null));
     }
 

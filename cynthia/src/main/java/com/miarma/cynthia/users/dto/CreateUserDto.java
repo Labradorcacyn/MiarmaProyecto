@@ -2,6 +2,8 @@ package com.miarma.cynthia.users.dto;
 
 import lombok.*;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -9,8 +11,8 @@ import lombok.*;
 @Builder
 public class CreateUserDto {
 
-    private String username;
     private String avatar;
+    private Date birthday;
     private String fullname;
     private String email;
     private Boolean isPrivate;

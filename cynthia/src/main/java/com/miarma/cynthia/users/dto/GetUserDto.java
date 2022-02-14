@@ -10,6 +10,7 @@ import lombok.*;
 public class GetUserDto {
 
     private String avatar;
+    private String birthday;
     private String fullName;
     private String email;
     private Boolean isPrivate;

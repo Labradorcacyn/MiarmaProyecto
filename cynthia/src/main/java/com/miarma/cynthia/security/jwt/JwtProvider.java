@@ -75,8 +75,5 @@ public class JwtProvider {
             log.info("Error con el token: " + ex.getMessage());
         }
         return false;
-
     }
-
-
 }
