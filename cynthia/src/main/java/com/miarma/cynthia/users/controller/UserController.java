@@ -19,6 +19,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 public class UserController {
@@ -62,7 +64,7 @@ public class UserController {
     }
 
     @PostMapping("/auth/register")
-    public ResponseEntity<GetUserDto> newUser (@RequestPart("file") MultipartFile file,  @RequestPart("body") CreateUserDto createUserDto){
+    public ResponseEntity<GetUserDto> newUser (@RequestPart("file") MultipartFile file,  @RequestPart("body") CreateUserDto createUserDto) throws IOException {
         UserEntity saved = userEntityService.registrarUsuario(createUserDto, file);
 
         if (saved == null)

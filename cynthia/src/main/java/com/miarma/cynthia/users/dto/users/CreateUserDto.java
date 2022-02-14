@@ -2,6 +2,7 @@ package com.miarma.cynthia.users.dto.users;
 
 import lombok.*;
 
+import java.awt.*;
 import java.util.Date;
 
 @Getter @Setter @Builder

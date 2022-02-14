@@ -1,5 +1,6 @@
 package com.miarma.cynthia.users.model;
 
+import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;

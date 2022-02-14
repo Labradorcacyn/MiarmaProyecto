@@ -18,6 +18,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.imageio.ImageIO;
+import org.imgscalr.Scalr;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,7 +42,7 @@ public class UserEntityService extends BaseService<UserEntity, UUID, UserEntityR
                 .orElseThrow(()-> new UsernameNotFoundException(email + " no encontrado"));
     }
 
-    public UserEntity registrarUsuario(CreateUserDto createUserDto, MultipartFile file){
+    public UserEntity registrarUsuario(CreateUserDto createUserDto, MultipartFile file) throws IOException {
 
         String filename = fileService.store(file);
 
@@ -43,12 +51,23 @@ public class UserEntityService extends BaseService<UserEntity, UUID, UserEntityR
                 .path(filename)
                 .toUriString();
 
+        byte[] byteFile = Files.readAllBytes(Paths.get(filename));
+        BufferedImage image =  ImageIO.read(
+                new ByteArrayInputStream(byteFile)
+        );
+
+        BufferedImage scale = Scalr.resize(image,500);
+
+        OutputStream out = Files.newOutputStream(Paths.get("foto-thumb.jpeg"));
+
+        ImageIO.write(scale, "jpg", out);
+
         if(createUserDto.getPassword().contentEquals((createUserDto.getPassword2()))){
             UserEntity usuario = UserEntity.builder()
                     .birthday(createUserDto.getBirthday())
                     .privacy(createUserDto.isPrivacy())
-                    .avatar(uri)
                     .file(uri)
+                    .avatar(uri)
                     .fullName(createUserDto.getFullName())
                     .email(createUserDto.getEmail())
                     .password(passwordEncoder.encode(createUserDto.getPassword()))
