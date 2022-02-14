@@ -3,9 +3,9 @@ package com.miarma.cynthia.users.controller;
 import com.miarma.cynthia.security.dto.JwtUserResponse;
 import com.miarma.cynthia.security.dto.LoginDto;
 import com.miarma.cynthia.security.jwt.JwtProvider;
-import com.miarma.cynthia.users.dto.CreateUserDto;
-import com.miarma.cynthia.users.dto.GetUserDto;
-import com.miarma.cynthia.users.dto.UserDtoConverter;
+import com.miarma.cynthia.users.dto.users.CreateUserDto;
+import com.miarma.cynthia.users.dto.users.GetUserDto;
+import com.miarma.cynthia.users.dto.users.UserDtoConverter;
 import com.miarma.cynthia.users.model.UserEntity;
 import com.miarma.cynthia.users.services.UserEntityService;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +16,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -63,9 +61,9 @@ public class UserController {
                 .build();
     }
 
-    @PostMapping("/auth/register/user")
-    public ResponseEntity<GetUserDto> newUser (@RequestBody CreateUserDto createUserDto){
-        UserEntity saved = userEntityService.registrarUsuario(createUserDto);
+    @PostMapping("/auth/register")
+    public ResponseEntity<GetUserDto> newUser (@RequestPart("file") MultipartFile file,  @RequestPart("body") CreateUserDto createUserDto){
+        UserEntity saved = userEntityService.registrarUsuario(createUserDto, file);
 
         if (saved == null)
             return ResponseEntity.badRequest().build();

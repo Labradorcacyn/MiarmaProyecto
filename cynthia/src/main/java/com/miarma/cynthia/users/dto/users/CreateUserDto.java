@@ -1,21 +1,19 @@
-package com.miarma.cynthia.users.dto;
+package com.miarma.cynthia.users.dto.users;
 
 import lombok.*;
 
 import java.util.Date;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter @Setter @Builder
+@NoArgsConstructor @AllArgsConstructor
 public class CreateUserDto {
 
+    private String file;
     private String avatar;
     private Date birthday;
-    private String fullname;
+    private String fullName;
     private String email;
-    private Boolean isPrivate;
+    private boolean privacy;
     private String password;
     private String password2;
 
