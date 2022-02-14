@@ -49,14 +49,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-                    .antMatchers(HttpMethod.POST, "/producto/**").hasRole("ADMIN")
-                    .antMatchers(HttpMethod.POST, "/auth/**").anonymous()
-                    .antMatchers("/h2-console/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                    .antMatchers(HttpMethod.GET, "/download/{filename:.+}").permitAll()
+                    .antMatchers(HttpMethod.POST, "/auth/register").anonymous()
                     .anyRequest().authenticated();
 
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
 
-        // Para dar acceso a h2
         http.headers().frameOptions().disable();
 
     }

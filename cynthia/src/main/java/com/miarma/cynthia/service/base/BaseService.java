@@ -1,4 +1,4 @@
-package com.miarma.cynthia.services.base;
+package com.miarma.cynthia.service.base;
 
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.miarma.cynthia.users.dto;
+package com.miarma.cynthia.users.dto.users;
 
 import com.miarma.cynthia.users.model.UserEntity;
 import org.springframework.stereotype.Component;
@@ -9,10 +9,10 @@ public class UserDtoConverter {
     public GetUserDto convertUserEntityToGetUserDto(UserEntity user) {
         return GetUserDto.builder()
                 .avatar(user.getAvatar())
-                .birthday(user.getBirthday().toString())
+                .birthday(user.getBirthday())
                 .fullName(user.getFullName())
                 .email(user.getEmail())
-                .isPrivate(user.getIsPrivate())
+                .privacy(user.isPrivacy())
                 .role(user.getRole().name())
                 .build();
 

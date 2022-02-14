@@ -1,5 +1,6 @@
 package com.miarma.cynthia.users.model;
 
+import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.UUID;
 
 import javax.persistence.*;
 
+import com.miarma.cynthia.models.Post;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Parameter;
@@ -22,13 +24,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name="users")
+@Entity @Table(name="users")
 @EntityListeners(AuditingEntityListener.class)
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
 public class UserEntity implements UserDetails {
 
     @Id
@@ -52,11 +50,13 @@ public class UserEntity implements UserDetails {
 
     private String password;
 
+    private String file;
+
     private String avatar;
 
     private String fullName;
 
-    private Boolean isPrivate;
+    private boolean privacy;
 
     private Date birthday;
 
@@ -68,6 +68,9 @@ public class UserEntity implements UserDetails {
 
     @OneToMany
     private List<UserEntity> request;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private List<Post> posts;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -105,4 +108,21 @@ public class UserEntity implements UserDetails {
         return true;
     }
 
+    //HELPER
+    public void acceptRequest(UserEntity u){
+        followers.add(u);
+        request.remove(u);
+    }
+
+    public void refuseRequest(UserEntity u){
+        request.remove(u);
+    }
+
+    public void requestToFollow(UserEntity u){
+        followers.add(u);
+    }
+
+    public void deleteToFollow(UserEntity u){
+        followers.remove(u);
+    }
 }
