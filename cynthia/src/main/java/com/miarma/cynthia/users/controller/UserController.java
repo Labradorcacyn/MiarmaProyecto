@@ -64,7 +64,7 @@ public class UserController {
     }
 
     @PostMapping("/auth/register")
-    public ResponseEntity<GetUserDto> newUser (@RequestPart("file") MultipartFile file,  @RequestPart("body") CreateUserDto createUserDto) throws IOException {
+    public ResponseEntity<GetUserDto> newUser (@RequestPart("file") MultipartFile file,  @RequestPart("body") CreateUserDto createUserDto) /*throws IOException */{
         UserEntity saved = userEntityService.registrarUsuario(createUserDto, file);
 
         if (saved == null)
