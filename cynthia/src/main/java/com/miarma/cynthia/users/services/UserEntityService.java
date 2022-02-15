@@ -42,7 +42,7 @@ public class UserEntityService extends BaseService<UserEntity, UUID, UserEntityR
                 .orElseThrow(()-> new UsernameNotFoundException(email + " no encontrado"));
     }
 
-    public UserEntity registrarUsuario(CreateUserDto createUserDto, MultipartFile file) throws IOException {
+    public UserEntity registrarUsuario(CreateUserDto createUserDto, MultipartFile file) /*throws IOException*/ {
 
         String filename = fileService.store(file);
 
@@ -51,7 +51,7 @@ public class UserEntityService extends BaseService<UserEntity, UUID, UserEntityR
                 .path(filename)
                 .toUriString();
 
-        byte[] byteFile = Files.readAllBytes(Paths.get(filename));
+       /* byte[] byteFile = Files.readAllBytes(Paths.get(filename));
         BufferedImage image =  ImageIO.read(
                 new ByteArrayInputStream(byteFile)
         );
@@ -60,7 +60,7 @@ public class UserEntityService extends BaseService<UserEntity, UUID, UserEntityR
 
         OutputStream out = Files.newOutputStream(Paths.get("foto-thumb.jpeg"));
 
-        ImageIO.write(scale, "jpg", out);
+        ImageIO.write(scale, "jpg", out);*/
 
         if(createUserDto.getPassword().contentEquals((createUserDto.getPassword2()))){
             UserEntity usuario = UserEntity.builder()
