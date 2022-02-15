@@ -4,12 +4,14 @@ import com.miarma.cynthia.models.Post;
 import com.miarma.cynthia.repository.PostRepo;
 import com.miarma.cynthia.repository.PostRepository;
 import com.miarma.cynthia.users.dto.posts.CreatePostDto;
+import com.miarma.cynthia.users.model.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +21,7 @@ public class PostService implements PostRepository {
     private final FileService fileService;
 
     @Override
-    public Post save(CreatePostDto createPostDto, MultipartFile file) {
+    public Post save(CreatePostDto createPostDto, MultipartFile file, UserEntity user) throws Exception {
         String filename = fileService.store(file);
 
         String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -27,16 +29,34 @@ public class PostService implements PostRepository {
                 .path(filename)
                 .toUriString();
 
-        return repository.save(Post.builder()
-                .isPrivate(createPostDto.isPrivate())
+        String resize = fileService.storeResized(file, 1024);
+
+        String uriResized = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/download/")
+                .path(resize)
+                .toUriString();
+
+        Post post = Post.builder()
+                .privacy(createPostDto.isPrivacy())
                 .text(createPostDto.getText())
                 .title(createPostDto.getTitle())
                 .document(uri)
-                .build());
+                .documentResized(uriResized)
+                .build();
+
+        //post.addUSer(user);
+
+        return repository.save(post);
     }
 
     @Override
-    public List<Post> findAll() {
-        return repository.findAll();
+    public void delete(Post post) throws IOException {
+        repository.delete(post);
+        fileService.deleteFile(post.getDocument());
+    }
+
+    @Override
+    public Post edit(Optional<Post> post, CreatePostDto createPostDto, MultipartFile file) {
+        return null;
     }
 }

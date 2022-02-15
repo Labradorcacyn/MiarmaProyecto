@@ -19,7 +19,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -64,12 +68,47 @@ public class UserController {
     }
 
     @PostMapping("/auth/register")
-    public ResponseEntity<GetUserDto> newUser (@RequestPart("file") MultipartFile file,  @RequestPart("body") CreateUserDto createUserDto) /*throws IOException */{
+    public ResponseEntity<GetUserDto> newUser (@RequestPart("file") MultipartFile file,  @RequestPart("body") CreateUserDto createUserDto) throws Exception{
         UserEntity saved = userEntityService.registrarUsuario(createUserDto, file);
 
         if (saved == null)
             return ResponseEntity.badRequest().build();
         else
             return ResponseEntity.ok(userDtoConverter.convertUserEntityToGetUserDto(saved));
+    }
+
+    @PostMapping("/follow/{nick}")
+    public ResponseEntity<?> followUser(@PathVariable String nick, @AuthenticationPrincipal UserEntity currentUser){
+        UserEntity user = userEntityService.findbyUserByUsername(nick);
+        user.requestToFollow(currentUser);
+        userEntityService.save(user);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/follow/accept/{id}")
+    public ResponseEntity<List<UserEntity>> acceptFollow(@PathVariable UUID id, @AuthenticationPrincipal UserEntity currentUser){
+        Optional<UserEntity> user = userEntityService.findById(id);
+        if(user.isPresent()){
+            if(currentUser.getRequest().contains(user.get())){
+                currentUser.acceptRequest(user.get());
+                return ResponseEntity.ok().body(currentUser.getFollowers());
+            }else return ResponseEntity.notFound().build();
+        }else return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/follow/decline/{id}")
+    public ResponseEntity<List<UserEntity>> declineFollow(@PathVariable UUID id, @AuthenticationPrincipal UserEntity currentUser){
+        Optional<UserEntity> user =userEntityService.findById(id);
+        if(user.isPresent()){
+            if(currentUser.getRequest().contains(user.get())){
+                currentUser.refuseRequest(user.get());
+                return ResponseEntity.ok().body(currentUser.getRequest());
+            }else return ResponseEntity.notFound().build();
+        }else return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/follow/list")
+    public ResponseEntity <List<GetUserDto>> followList(@AuthenticationPrincipal UserEntity user){
+        return ResponseEntity.ok().body(user.getRequest().stream().map(u -> userDtoConverter.convertUserEntityToGetUserDto(u)).collect(Collectors.toList()));
     }
 }

@@ -1,9 +1,9 @@
 package com.miarma.cynthia.users.model;
 
-import java.awt.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,27 +50,25 @@ public class UserEntity implements UserDetails {
 
     private String password;
 
-    private String file;
-
     private String avatar;
 
     private String fullName;
 
     private boolean privacy;
 
-    private Date birthday;
+    private LocalDate birthday;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
     @OneToMany
-    private List<UserEntity> followers;
+    private List<UserEntity> followers = new ArrayList<>();
 
     @OneToMany
-    private List<UserEntity> request;
+    private List<UserEntity> request = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<Post> posts;
+    private List<Post> posts = new ArrayList<>();
 
     @CreatedDate
     private LocalDateTime createdAt;

@@ -3,6 +3,7 @@ package com.miarma.cynthia.repository;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
@@ -18,7 +19,9 @@ public interface FileRepository {
 
     Resource loadAsResource(String filename);
 
-    void deleteFile(String filename);
+    void deleteFile(String filename) throws IOException;
+
+    String storeResized(MultipartFile file,int width) throws Exception;
 
     void deleteAll();
 }

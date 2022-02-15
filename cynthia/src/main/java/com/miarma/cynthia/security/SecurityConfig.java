@@ -53,12 +53,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers(HttpMethod.POST, "/auth/register").anonymous()
                     .antMatchers(HttpMethod.POST, "/auth/login").anonymous()
                     .antMatchers(HttpMethod.GET, "/me").hasRole("USER")
+                    .antMatchers(HttpMethod.POST, "/post/").hasRole("USER")
+                    .antMatchers(HttpMethod.GET, "/post/public").hasRole("USER")
+                    .antMatchers(HttpMethod.GET, "/post/{id}}").hasRole("USER")
+                    .antMatchers(HttpMethod.POST, "/follow/{nick}").hasRole("USER")
+                    .antMatchers(HttpMethod.GET, "/follow/list").hasRole("USER")
+                    .antMatchers(HttpMethod.GET, "/follow/accept/{id}").hasRole("USER")
+                    .antMatchers(HttpMethod.GET, "/follow/decline/{id}").hasRole("USER")
                     .anyRequest().authenticated();
 
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
 
         http.headers().frameOptions().disable();
-
     }
 
     @Bean

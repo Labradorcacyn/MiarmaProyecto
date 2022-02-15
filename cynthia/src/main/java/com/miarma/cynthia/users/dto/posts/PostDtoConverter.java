@@ -7,10 +7,13 @@ import org.springframework.stereotype.Component;
 public class PostDtoConverter {
     public GetPostDto convertPostToGetPostDto(Post post) {
         return GetPostDto.builder()
+                .id(post.getId())
                 .title(post.getTitle())
+                .user(post.getUser())
                 .text(post.getText())
                 .document(post.getDocument())
-                .isPrivate(post.isPrivate())
+                .documentResized(post.getDocumentResized())
+                .privacy(post.isPrivacy())
                 .build();
     }
 }

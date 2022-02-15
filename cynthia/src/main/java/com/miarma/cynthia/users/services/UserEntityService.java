@@ -17,15 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import javax.imageio.ImageIO;
-import org.imgscalr.Scalr;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,14 +32,18 @@ public class UserEntityService extends BaseService<UserEntity, UUID, UserEntityR
         return this.repository.findFirstByEmail(email)
                 .orElseThrow(()-> new UsernameNotFoundException(email + " no encontrado"));
     }
+    public UserEntity findbyUserByUsername(String fullName) throws UsernameNotFoundException {
+        return this.repository.findFirstByfullName(fullName)
+                .orElseThrow(()-> new UsernameNotFoundException(fullName + " no encontrado"));
+    }
 
-    public UserEntity registrarUsuario(CreateUserDto createUserDto, MultipartFile file) /*throws IOException*/ {
+    public UserEntity registrarUsuario(CreateUserDto createUserDto, MultipartFile file) throws Exception /*throws IOException*/ {
 
-        String filename = fileService.store(file);
+        String resize = fileService.storeResized(file, 128);
 
-        String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
+        String uriResized = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/download/")
-                .path(filename)
+                .path(resize)
                 .toUriString();
 
        /* byte[] byteFile = Files.readAllBytes(Paths.get(filename));
@@ -56,7 +51,7 @@ public class UserEntityService extends BaseService<UserEntity, UUID, UserEntityR
                 new ByteArrayInputStream(byteFile)
         );
 
-        BufferedImage scale = Scalr.resize(image,500);
+        BufferedImage scale = Scalr.resize(image,128);
 
         OutputStream out = Files.newOutputStream(Paths.get("foto-thumb.jpeg"));
 
@@ -66,8 +61,7 @@ public class UserEntityService extends BaseService<UserEntity, UUID, UserEntityR
             UserEntity usuario = UserEntity.builder()
                     .birthday(createUserDto.getBirthday())
                     .privacy(createUserDto.isPrivacy())
-                    .file(uri)
-                    .avatar(uri)
+                    .avatar(uriResized)
                     .fullName(createUserDto.getFullName())
                     .email(createUserDto.getEmail())
                     .password(passwordEncoder.encode(createUserDto.getPassword()))
