@@ -4,21 +4,26 @@ import com.miarma.cynthia.models.Post;
 import com.miarma.cynthia.repository.PostRepo;
 import com.miarma.cynthia.repository.PostRepository;
 import com.miarma.cynthia.users.dto.posts.CreatePostDto;
+import com.miarma.cynthia.users.dto.posts.GetPostDto;
 import com.miarma.cynthia.users.model.UserEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class PostService implements PostRepository {
+public class PostService implements PostRepository{
 
     private final PostRepo repository;
     private final FileService fileService;
+
+    public Post findPostById(Long id){
+        return repository.findById(id).get();
+    }
 
     @Override
     public Post save(CreatePostDto createPostDto, MultipartFile file, UserEntity user) throws Exception {
@@ -44,7 +49,7 @@ public class PostService implements PostRepository {
                 .documentResized(uriResized)
                 .build();
 
-        //post.addUSer(user);
+        post.addUSer(user);
 
         return repository.save(post);
     }
@@ -56,7 +61,7 @@ public class PostService implements PostRepository {
     }
 
     @Override
-    public Post edit(Optional<Post> post, CreatePostDto createPostDto, MultipartFile file) {
+    public Post edit(ResponseEntity<GetPostDto> post, CreatePostDto createPostDto, MultipartFile file) {
         return null;
     }
 }

@@ -14,6 +14,6 @@ public class GetPostDto {
     private String text;
     private String document;
     private String documentResized;
-    private UserEntity user;
+    private String user;
     private boolean privacy;
 }

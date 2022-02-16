@@ -51,22 +51,17 @@ public class PostController {
     public ResponseEntity<?> delete(@PathVariable UUID id){
         return null;
     }
-/*
-    @PutMapping("/{id}")
-    public ResponseEntity<GetPostDto> edit(@PathVariable UUID id, @RequestPart("file") MultipartFile file,
+
+    /*@PutMapping("/{id}")
+    public ResponseEntity<GetPostDto> edit(@PathVariable Long id, @RequestPart("file") MultipartFile file,
                                              @RequestPart("post") CreatePostDto createPostDto) {
+        Post post = postService.findPostById(id);
 
-        Optional<Post> post = postService.findById(id);
-
-        if(post.isPresent()){
-            Post edit = postService.edit(post, createPostDto, file);
-
-            if (edit == null)
-                return ResponseEntity.badRequest().build();
-            else
-                return ResponseEntity.status(HttpStatus.CREATED).body(postDtoConverter.convertPostToGetPostDto(edit));
-            }else{
+        if(post == null){
             return ResponseEntity.notFound().build();
-            }
-        }*/
+        }else{
+         //Post edit = postService.edit(post, createPostDto, file);
+            return ResponseEntity.status(HttpStatus.CREATED).body(postDtoConverter.convertPostToGetPostDto(edit));
+        }
+    }*/
 }

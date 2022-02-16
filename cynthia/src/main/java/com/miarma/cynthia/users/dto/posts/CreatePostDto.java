@@ -22,7 +22,7 @@ public class CreatePostDto {
 
     private String documentResized;
 
-    private UserEntity user;
+    private String user;
 
     private boolean privacy;
 }

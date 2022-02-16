@@ -9,7 +9,7 @@ public class PostDtoConverter {
         return GetPostDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())
-                .user(post.getUser())
+                .user(post.getUser().getFullName())
                 .text(post.getText())
                 .document(post.getDocument())
                 .documentResized(post.getDocumentResized())

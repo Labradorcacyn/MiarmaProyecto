@@ -1,17 +1,16 @@
 package com.miarma.cynthia.models;
 
 import com.miarma.cynthia.users.model.UserEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity @Table(name="posts")
 @EntityListeners(AuditingEntityListener.class)
-@Data @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Post {
 
     @Id
@@ -27,6 +26,9 @@ public class Post {
     private String documentResized;
 
     private boolean privacy;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
 
     @ManyToOne
     private UserEntity user;

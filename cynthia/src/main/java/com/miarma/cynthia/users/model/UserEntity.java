@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.persistence.*;
 
 import com.miarma.cynthia.models.Post;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Parameter;
@@ -19,14 +20,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 @Entity @Table(name="users")
 @EntityListeners(AuditingEntityListener.class)
-@Data @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor @Builder
 public class UserEntity implements UserDetails {
 
     @Id
@@ -60,12 +57,12 @@ public class UserEntity implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
-
+/*
     @OneToMany
     private List<UserEntity> followers = new ArrayList<>();
 
     @OneToMany
-    private List<UserEntity> request = new ArrayList<>();
+    private List<UserEntity> request = new ArrayList<>();*/
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Post> posts = new ArrayList<>();
@@ -107,7 +104,7 @@ public class UserEntity implements UserDetails {
     }
 
     //HELPER
-    public void acceptRequest(UserEntity u){
+    /*public void acceptRequest(UserEntity u){
         followers.add(u);
         request.remove(u);
     }
@@ -122,5 +119,5 @@ public class UserEntity implements UserDetails {
 
     public void deleteToFollow(UserEntity u){
         followers.remove(u);
-    }
+    }*/
 }

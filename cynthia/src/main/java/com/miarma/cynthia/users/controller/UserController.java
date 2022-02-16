@@ -77,7 +77,7 @@ public class UserController {
             return ResponseEntity.ok(userDtoConverter.convertUserEntityToGetUserDto(saved));
     }
 
-    @PostMapping("/follow/{nick}")
+    /*@PostMapping("/follow/{nick}")
     public ResponseEntity<?> followUser(@PathVariable String nick, @AuthenticationPrincipal UserEntity currentUser){
         UserEntity user = userEntityService.findbyUserByUsername(nick);
         user.requestToFollow(currentUser);
@@ -110,5 +110,5 @@ public class UserController {
     @GetMapping("/follow/list")
     public ResponseEntity <List<GetUserDto>> followList(@AuthenticationPrincipal UserEntity user){
         return ResponseEntity.ok().body(user.getRequest().stream().map(u -> userDtoConverter.convertUserEntityToGetUserDto(u)).collect(Collectors.toList()));
-    }
+    }*/
 }
