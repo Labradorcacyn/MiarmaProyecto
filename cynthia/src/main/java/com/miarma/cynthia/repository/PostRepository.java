@@ -13,5 +13,4 @@ public interface PostRepository {
     Post save(CreatePostDto createPostDto, MultipartFile file, UserEntity user) throws Exception;
     void delete(Post post) throws IOException;
     Post edit(ResponseEntity<GetPostDto> post, CreatePostDto createPostDto, MultipartFile file);
-    //Optional<Post> findById(UUID id);
 }

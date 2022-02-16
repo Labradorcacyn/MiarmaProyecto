@@ -1,8 +1,12 @@
 package com.miarma.cynthia.users.controller;
 
+import com.miarma.cynthia.models.Follow;
 import com.miarma.cynthia.security.dto.JwtUserResponse;
 import com.miarma.cynthia.security.dto.LoginDto;
 import com.miarma.cynthia.security.jwt.JwtProvider;
+import com.miarma.cynthia.service.FollowService;
+import com.miarma.cynthia.users.dto.follow.FollowDtoConverter;
+import com.miarma.cynthia.users.dto.follow.GetFollowDto;
 import com.miarma.cynthia.users.dto.users.CreateUserDto;
 import com.miarma.cynthia.users.dto.users.GetUserDto;
 import com.miarma.cynthia.users.dto.users.UserDtoConverter;
@@ -22,8 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -33,6 +35,8 @@ public class UserController {
     private final UserDtoConverter userDtoConverter;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final FollowService followService;
+    private final FollowDtoConverter followDtoConverter;
 
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
@@ -77,38 +81,28 @@ public class UserController {
             return ResponseEntity.ok(userDtoConverter.convertUserEntityToGetUserDto(saved));
     }
 
-    /*@PostMapping("/follow/{nick}")
-    public ResponseEntity<?> followUser(@PathVariable String nick, @AuthenticationPrincipal UserEntity currentUser){
-        UserEntity user = userEntityService.findbyUserByUsername(nick);
-        user.requestToFollow(currentUser);
-        userEntityService.save(user);
-        return ResponseEntity.ok().build();
+    @PostMapping("/follow/{nick}")
+    public ResponseEntity<GetFollowDto> followUser(@PathVariable String nick, @AuthenticationPrincipal UserEntity currentUser){
+        UserEntity user = userEntityService.findbyUserByFullName(nick);
+        Follow follow = new Follow();
+        follow.addSeguidorSeguido(currentUser,user);
+        followService.save(follow);
+        return ResponseEntity.ok().body(followDtoConverter.convertFollowToGetFollowtDto(follow));
     }
 
     @PostMapping("/follow/accept/{id}")
     public ResponseEntity<List<UserEntity>> acceptFollow(@PathVariable UUID id, @AuthenticationPrincipal UserEntity currentUser){
         Optional<UserEntity> user = userEntityService.findById(id);
-        if(user.isPresent()){
-            if(currentUser.getRequest().contains(user.get())){
-                currentUser.acceptRequest(user.get());
-                return ResponseEntity.ok().body(currentUser.getFollowers());
-            }else return ResponseEntity.notFound().build();
-        }else return ResponseEntity.notFound().build();
+        return null;
     }
 
     @PostMapping("/follow/decline/{id}")
     public ResponseEntity<List<UserEntity>> declineFollow(@PathVariable UUID id, @AuthenticationPrincipal UserEntity currentUser){
-        Optional<UserEntity> user =userEntityService.findById(id);
-        if(user.isPresent()){
-            if(currentUser.getRequest().contains(user.get())){
-                currentUser.refuseRequest(user.get());
-                return ResponseEntity.ok().body(currentUser.getRequest());
-            }else return ResponseEntity.notFound().build();
-        }else return ResponseEntity.notFound().build();
+        return null;
     }
 
     @GetMapping("/follow/list")
-    public ResponseEntity <List<GetUserDto>> followList(@AuthenticationPrincipal UserEntity user){
-        return ResponseEntity.ok().body(user.getRequest().stream().map(u -> userDtoConverter.convertUserEntityToGetUserDto(u)).collect(Collectors.toList()));
-    }*/
+    public ResponseEntity <List<Follow>> followList(@AuthenticationPrincipal UserEntity user){
+        return ResponseEntity.ok().body(userEntityService.GetMyFollowers(user.getId()));
+    }
 }

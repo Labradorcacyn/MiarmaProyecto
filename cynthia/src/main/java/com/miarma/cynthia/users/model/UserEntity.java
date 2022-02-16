@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import javax.persistence.*;
 
+import com.miarma.cynthia.models.Follow;
 import com.miarma.cynthia.models.Post;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -20,6 +21,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+
+@NamedEntityGraph(name = "graph_followers", attributeNodes = @NamedAttributeNode(value = "followers"))
 @Entity @Table(name="users")
 @EntityListeners(AuditingEntityListener.class)
 @Getter @Setter
@@ -57,12 +60,9 @@ public class UserEntity implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
-/*
-    @OneToMany
-    private List<UserEntity> followers = new ArrayList<>();
 
-    @OneToMany
-    private List<UserEntity> request = new ArrayList<>();*/
+    @OneToMany(mappedBy = "seguidor")
+    private List<Follow> followers = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Post> posts = new ArrayList<>();
@@ -102,22 +102,4 @@ public class UserEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-    //HELPER
-    /*public void acceptRequest(UserEntity u){
-        followers.add(u);
-        request.remove(u);
-    }
-
-    public void refuseRequest(UserEntity u){
-        request.remove(u);
-    }
-
-    public void requestToFollow(UserEntity u){
-        followers.add(u);
-    }
-
-    public void deleteToFollow(UserEntity u){
-        followers.remove(u);
-    }*/
 }
