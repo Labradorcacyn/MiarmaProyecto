@@ -2,10 +2,7 @@ package com.miarma.cynthia.users.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import javax.persistence.*;
 
@@ -22,7 +19,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
-@NamedEntityGraph(name = "graph_followers", attributeNodes = @NamedAttributeNode(value = "followers"))
+//@NamedEntityGraph(name = "graph_followers", attributeNodes = @NamedAttributeNode(value = "followers"))
 @Entity @Table(name="users")
 @EntityListeners(AuditingEntityListener.class)
 @Getter @Setter
@@ -61,8 +58,11 @@ public class UserEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @OneToMany(mappedBy = "seguidor")
-    private List<Follow> followers = new ArrayList<>();
+    @OneToMany(mappedBy = "seguidor", fetch = FetchType.EAGER)
+    private Set<Follow> followers = new HashSet<>();
+
+    @OneToMany(mappedBy = "seguido", fetch = FetchType.EAGER)
+    private Set<Follow> seguido = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Post> posts = new ArrayList<>();

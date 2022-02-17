@@ -32,11 +32,11 @@ public class UserEntityService extends BaseService<UserEntity, UUID, UserEntityR
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return this.repository.findFirstByEmail(email)
+        return repository.findFirstByEmail(email)
                 .orElseThrow(()-> new UsernameNotFoundException(email + " no encontrado"));
     }
-    public UserEntity findbyUserByFullName(String fullName) throws UsernameNotFoundException {
-        return this.repository.findFirstByfullName(fullName)
+    public UserEntity findByFullName(String fullName) throws UsernameNotFoundException {
+        return repository.findByFullName(fullName)
                 .orElseThrow(()-> new UsernameNotFoundException(fullName + " no encontrado"));
     }
 
@@ -81,7 +81,7 @@ public class UserEntityService extends BaseService<UserEntity, UUID, UserEntityR
     }
 
     public List<Follow> GetMyFollowers(UUID id){
-        return repository.findAllFollowersById(id);
+        return repository.findAllFollower(id);
     }
 
     public Optional<UserEntity> findByEmail (String email){

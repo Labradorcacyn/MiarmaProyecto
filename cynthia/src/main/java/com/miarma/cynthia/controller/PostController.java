@@ -8,6 +8,7 @@ import com.miarma.cynthia.users.dto.posts.GetPostDto;
 import com.miarma.cynthia.users.dto.posts.PostDtoConverter;
 import com.miarma.cynthia.users.model.UserEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,8 +16,11 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/post")
 @RequiredArgsConstructor
@@ -47,9 +51,24 @@ public class PostController {
             return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/public")
+    public ResponseEntity<List<GetPostDto>> findPublicPost(){
+        if(postRepo.findByPrivacyFalse().isEmpty())
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(postRepo.findByPrivacyFalse().stream().map(p->postDtoConverter.convertPostToGetPostDto(p)).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<List<GetPostDto>> findMyPost(@AuthenticationPrincipal UserEntity user){
+        return ResponseEntity.ok().body(postRepo.findAllPosts(user.getId()).stream().map(p->postDtoConverter.convertPostToGetPostDto(p)).collect(Collectors.toList()));
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable UUID id){
-        return null;
+    public ResponseEntity<?> delete(@PathVariable Long id, @RequestPart("file") MultipartFile file,
+                                    @RequestPart("post") CreatePostDto createPostDto) throws ChangeSetPersister.NotFoundException, IOException {
+        Post post = postRepo.findById(id).orElseThrow(ChangeSetPersister.NotFoundException::new);
+        postService.delete(post, file);
+        return ResponseEntity.noContent().build();
     }
 
     /*@PutMapping("/{id}")

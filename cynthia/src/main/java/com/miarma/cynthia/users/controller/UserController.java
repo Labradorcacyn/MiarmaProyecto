@@ -23,10 +23,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 @RestController
 @RequiredArgsConstructor
 public class UserController {
@@ -79,30 +75,5 @@ public class UserController {
             return ResponseEntity.badRequest().build();
         else
             return ResponseEntity.ok(userDtoConverter.convertUserEntityToGetUserDto(saved));
-    }
-
-    @PostMapping("/follow/{nick}")
-    public ResponseEntity<GetFollowDto> followUser(@PathVariable String nick, @AuthenticationPrincipal UserEntity currentUser){
-        UserEntity user = userEntityService.findbyUserByFullName(nick);
-        Follow follow = new Follow();
-        follow.addSeguidorSeguido(currentUser,user);
-        followService.save(follow);
-        return ResponseEntity.ok().body(followDtoConverter.convertFollowToGetFollowtDto(follow));
-    }
-
-    @PostMapping("/follow/accept/{id}")
-    public ResponseEntity<List<UserEntity>> acceptFollow(@PathVariable UUID id, @AuthenticationPrincipal UserEntity currentUser){
-        Optional<UserEntity> user = userEntityService.findById(id);
-        return null;
-    }
-
-    @PostMapping("/follow/decline/{id}")
-    public ResponseEntity<List<UserEntity>> declineFollow(@PathVariable UUID id, @AuthenticationPrincipal UserEntity currentUser){
-        return null;
-    }
-
-    @GetMapping("/follow/list")
-    public ResponseEntity <List<Follow>> followList(@AuthenticationPrincipal UserEntity user){
-        return ResponseEntity.ok().body(userEntityService.GetMyFollowers(user.getId()));
     }
 }

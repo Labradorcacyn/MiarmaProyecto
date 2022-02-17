@@ -8,11 +8,13 @@ import com.miarma.cynthia.users.dto.posts.GetPostDto;
 import com.miarma.cynthia.users.model.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,10 +22,6 @@ public class PostService implements PostRepository{
 
     private final PostRepo repository;
     private final FileService fileService;
-
-    public Post findPostById(Long id){
-        return repository.findById(id).get();
-    }
 
     @Override
     public Post save(CreatePostDto createPostDto, MultipartFile file, UserEntity user) throws Exception {
@@ -55,9 +53,13 @@ public class PostService implements PostRepository{
     }
 
     @Override
-    public void delete(Post post) throws IOException {
+    public void delete(Post post, MultipartFile file) throws IOException {
         repository.delete(post);
-        fileService.deleteFile(post.getDocument());
+        fileService.deleteFile(file.getOriginalFilename());
+    }
+
+    public List<Post> findPublic(@AuthenticationPrincipal UserEntity user){
+       return repository.findByPrivacyFalse();
     }
 
     @Override

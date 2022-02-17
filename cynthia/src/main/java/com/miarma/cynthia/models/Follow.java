@@ -25,17 +25,20 @@ public class Follow {
 
     private boolean isFollow;
 
-    public void addSeguidorSeguido(UserEntity Pseguidor, UserEntity Pseguido) {
+    public void addSeguidoSeguidor(UserEntity Pseguido, UserEntity Pseguidor) {
         seguido = Pseguido;
         seguidor = Pseguidor;
+        Pseguido.getSeguido().add(this);
+    }
+    public void addSeguidorSeguido(UserEntity Pseguidor, UserEntity Pseguido) {
+        seguidor = Pseguidor;
+        seguido = Pseguido;
         Pseguidor.getFollowers().add(this);
-        Pseguido.getFollowers().add(this);
     }
 
-    public void removeSeguidorSeguido(UserEntity Pseguidor, UserEntity Pseguido) {
-        Pseguido.getFollowers().remove(seguidor);
+    public void removeSeguidoSeguidor(UserEntity Pseguidor) {
         Pseguidor.getFollowers().remove(seguido);
-        seguidor = null;
         seguido = null;
+        seguidor = null;
     }
 }
