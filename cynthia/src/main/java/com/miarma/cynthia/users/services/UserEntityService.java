@@ -1,6 +1,5 @@
 package com.miarma.cynthia.users.services;
 
-import com.miarma.cynthia.models.Follow;
 import com.miarma.cynthia.service.FileService;
 import com.miarma.cynthia.service.base.BaseService;
 import com.miarma.cynthia.users.dto.users.CreateUserDto;
@@ -19,8 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service("userDetailsService")
@@ -28,15 +25,16 @@ import java.util.UUID;
 public class UserEntityService extends BaseService<UserEntity, UUID, UserEntityRepository> implements UserDetailsService {
 
     private final PasswordEncoder passwordEncoder;
+    private final UserEntityRepository userEntityRepository;
     private final FileService fileService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return repository.findFirstByEmail(email)
+        return userEntityRepository.findFirstByEmail(email)
                 .orElseThrow(()-> new UsernameNotFoundException(email + " no encontrado"));
     }
-    public UserEntity findByFullName(String fullName) throws UsernameNotFoundException {
-        return repository.findByFullName(fullName)
+    public UserEntity findFirstByFullName(String fullName) throws UsernameNotFoundException {
+        return userEntityRepository.findFirstByFullName(fullName)
                 .orElseThrow(()-> new UsernameNotFoundException(fullName + " no encontrado"));
     }
 
@@ -78,13 +76,5 @@ public class UserEntityService extends BaseService<UserEntity, UUID, UserEntityR
         }else{
             return null;
         }
-    }
-
-    public List<Follow> GetMyFollowers(UUID id){
-        return repository.findAllFollower(id);
-    }
-
-    public Optional<UserEntity> findByEmail (String email){
-        return this.repository.findFirstByEmail(email);
     }
 }

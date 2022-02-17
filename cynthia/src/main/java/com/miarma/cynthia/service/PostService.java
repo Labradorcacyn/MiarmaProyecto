@@ -54,8 +54,8 @@ public class PostService implements PostRepository{
 
     @Override
     public void delete(Post post, MultipartFile file) throws IOException {
-        repository.delete(post);
         fileService.deleteFile(file.getOriginalFilename());
+        repository.delete(post);
     }
 
     public List<Post> findPublic(@AuthenticationPrincipal UserEntity user){

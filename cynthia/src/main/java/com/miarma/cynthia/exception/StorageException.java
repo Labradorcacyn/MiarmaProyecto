@@ -1,6 +1,5 @@
 package com.miarma.cynthia.exception;
 
-import java.io.IOException;
 public class StorageException extends RuntimeException {
 
     public StorageException(String message, Exception e) {

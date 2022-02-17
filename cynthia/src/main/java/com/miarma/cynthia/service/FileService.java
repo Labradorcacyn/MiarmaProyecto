@@ -50,6 +50,7 @@ public class FileService implements FileRepository {
 
     @Override
     public String store(MultipartFile file) {
+
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
         String newFilename = "";
         try {
@@ -82,6 +83,29 @@ public class FileService implements FileRepository {
 
     @Override
     public String storeResized(MultipartFile file,int width) throws Exception {
+
+        /*IVCompressor compressor = new IVCompressor();
+
+        IVSize customRes=new IVSize();
+        customRes.setWidth(128);
+
+        byte[] bytes = compressor.resizeImageWithCustomRes(file.getBytes(), ImageFormats.JPEG, customRes);
+
+        File convFile = new File(file.getOriginalFilename());
+        convFile.createNewFile();
+        FileOutputStream fos = new FileOutputStream(convFile);
+        fos.write(bytes);
+
+        //String resize = new String(bytes, StandardCharsets.UTF_8);
+
+
+    public String getContentType() {
+            if(getExt() == null) {
+                return null;
+            }
+            return MimeTypes.getMimeType(getExt());
+	}*/
+
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
 
         String extension = StringUtils.getFilenameExtension(filename);

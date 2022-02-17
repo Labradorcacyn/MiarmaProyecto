@@ -58,8 +58,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers(HttpMethod.GET, "/post/{id}}").hasRole("USER")
                     .antMatchers(HttpMethod.POST, "/follow/{nick}").hasRole("USER")
                     .antMatchers(HttpMethod.GET, "/follow/list").hasRole("USER")
-                    .antMatchers(HttpMethod.GET, "/follow/accept/{id}").hasRole("USER")
-                    .antMatchers(HttpMethod.GET, "/follow/decline/{id}").hasRole("USER")
+                    .antMatchers(HttpMethod.POST, "/follow/accept/{id}").hasRole("USER")
+                    .antMatchers(HttpMethod.POST, "/follow/decline/{id}").hasRole("USER")
                     .antMatchers(HttpMethod.GET, "/post/me").hasRole("USER")
                     .antMatchers(HttpMethod.DELETE, "/post/{id}").hasRole("USER")
                     .anyRequest().authenticated();
