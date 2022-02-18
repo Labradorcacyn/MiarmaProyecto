@@ -1,8 +1,4 @@
-![image](https://cdn.discordapp.com/attachments/787363155494830091/907941779733618708/unknown.png)
-
-# Readme de REALESTATE
-### (BackEnd) 
-
+# Readme de MIARMA APP
 
 > Esta api Rest con Spring tiene la intención de modelar el funcionamiento de una red social con diferentes entidades y
 > asociaciones entre ellas. Partiendo de 'UserEntity' como base e interrelacionandolo con 'Publicaciones',
