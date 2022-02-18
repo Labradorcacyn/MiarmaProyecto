@@ -5,10 +5,13 @@ import com.miarma.cynthia.exception.FileNotFoundException;
 import com.miarma.cynthia.exception.StorageException;
 import com.miarma.cynthia.repository.FileRepository;
 import com.miarma.cynthia.utils.MediaTypeUrlResource;
+import io.github.techgnious.IVCompressor;
+import io.github.techgnious.dto.IVSize;
+import io.github.techgnious.dto.ResizeResolution;
+import io.github.techgnious.dto.VideoFormats;
 import org.imgscalr.Scalr;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
@@ -17,9 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -77,52 +78,36 @@ public class FileService implements FileRepository {
         return newFilename;
     }
 
-    public static BufferedImage simpleResizeImage(BufferedImage file, int width){
-        return Scalr.resize(file, width);
-    }
-
     @Override
     public String storeResized(MultipartFile file,int width) throws Exception {
-
-        /*IVCompressor compressor = new IVCompressor();
-
-        IVSize customRes=new IVSize();
-        customRes.setWidth(128);
-
-        byte[] bytes = compressor.resizeImageWithCustomRes(file.getBytes(), ImageFormats.JPEG, customRes);
-
-        File convFile = new File(file.getOriginalFilename());
-        convFile.createNewFile();
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(bytes);
-
-        //String resize = new String(bytes, StandardCharsets.UTF_8);
-
-
-    public String getContentType() {
-            if(getExt() == null) {
-                return null;
-            }
-            return MimeTypes.getMimeType(getExt());
-	}*/
 
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
 
         String extension = StringUtils.getFilenameExtension(filename);
         String name = filename.replace("."+extension,"");
 
-        BufferedImage img = ImageIO.read(file.getInputStream());
+        BufferedImage original = ImageIO.read(file.getInputStream());
 
-        BufferedImage escaleImg = simpleResizeImage(img , width);
+        /*IVCompressor compressor = new IVCompressor();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write( escaleImg, extension, baos );
+        IVSize customRes=new IVSize();
+        customRes.setWidth(width);
 
-        MultipartFile newImage = new MockMultipartFile(name,baos.toByteArray());
+        byte[] bytes = compressor.resizeImageWithCustomRes(file.getBytes(), ImageFormats.JPEG, customRes);
+
+        BufferedImage scaled = ImageIO.read(new ByteArrayInputStream(bytes));*/
+
+        BufferedImage scaled = Scalr.resize(original, width);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        ImageIO.write(scaled, "jpg", out);
+
+        InputStream newImage = new ByteArrayInputStream(out.toByteArray());
 
         try {
 
-            if (newImage.isEmpty())
+            if (file.isEmpty())
                 throw new StorageException("El fichero subido está vacío");
 
             while(Files.exists(rootLocation.resolve(filename))) {
@@ -132,7 +117,60 @@ public class FileService implements FileRepository {
                 filename = name + "_" + suffix + "." + extension;
             }
 
-            try (InputStream inputStream = newImage.getInputStream()) {
+            try (InputStream inputStream = newImage) {
+                Files.copy(inputStream, rootLocation.resolve(filename),
+                        StandardCopyOption.REPLACE_EXISTING);
+            }
+
+        } catch (IOException ex) {
+            throw new StorageException("Error en el almacenamiento del fichero: " + filename, ex);
+        }
+        return filename;
+    }
+
+    @Override
+    public String storeVideoResized(MultipartFile file,int width) throws Exception {
+
+        String filename = StringUtils.cleanPath(file.getOriginalFilename());
+
+        String extension = StringUtils.getFilenameExtension(filename);
+        String name = filename.replace("."+extension,"");
+
+        BufferedImage original = ImageIO.read(file.getInputStream());
+
+        ByteArrayOutputStream outIm = new ByteArrayOutputStream();
+
+        ImageIO.write(original , "avi", outIm);
+
+        byte[] bytesImage = outIm.toByteArray();
+
+        IVCompressor compressor = new IVCompressor();
+
+        IVSize customRes=new IVSize();
+        customRes.setWidth(width);
+
+        BufferedImage scaled = ImageIO.read(new ByteArrayInputStream(
+                compressor.convertAndResizeVideo(bytesImage, VideoFormats.MP4,VideoFormats.MOV, ResizeResolution.R720P)));
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        ImageIO.write(scaled, "jpg", out);
+
+        InputStream newImage = new ByteArrayInputStream(out.toByteArray());
+
+        try {
+
+            if (file.isEmpty())
+                throw new StorageException("El fichero subido está vacío");
+
+            while(Files.exists(rootLocation.resolve(filename))) {
+                String suffix = Long.toString(System.currentTimeMillis());
+                suffix = suffix.substring(suffix.length()-6);
+
+                filename = name + "_" + suffix + "." + extension;
+            }
+
+            try (InputStream inputStream = newImage) {
                 Files.copy(inputStream, rootLocation.resolve(filename),
                         StandardCopyOption.REPLACE_EXISTING);
             }
@@ -174,9 +212,12 @@ public class FileService implements FileRepository {
     }
 
     @Override
-    public void deleteFile(String filename) throws IOException {
-        Path file = load(filename);
-        Files.deleteIfExists(file);
+    public void deleteFile(String filename) {
+        try {
+            Boolean delete = Files.deleteIfExists(this.rootLocation.resolve(filename));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -23,5 +23,7 @@ public interface FileRepository {
 
     String storeResized(MultipartFile file,int width) throws Exception;
 
+    String storeVideoResized(MultipartFile file,int width) throws Exception;
+
     void deleteAll();
 }

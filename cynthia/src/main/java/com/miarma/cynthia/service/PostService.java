@@ -13,7 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.activation.MimetypesFileTypeMap;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Service
@@ -26,13 +29,18 @@ public class PostService implements PostRepository{
     @Override
     public Post save(CreatePostDto createPostDto, MultipartFile file, UserEntity user) throws Exception {
         String filename = fileService.store(file);
-
+        String resize = "";
         String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/download/")
                 .path(filename)
                 .toUriString();
 
-        String resize = fileService.storeResized(file, 1024);
+        if (new MimetypesFileTypeMap().getContentType(file.getOriginalFilename()).equals("video/x-msvideo")){
+            resize = fileService.storeVideoResized(file, 1024);;
+        }
+        if (new MimetypesFileTypeMap().getContentType(file.getOriginalFilename()).equals("image/jpeg")){
+            resize = fileService.storeResized(file, 1024);
+        }
 
         String uriResized = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/download/")
@@ -53,8 +61,9 @@ public class PostService implements PostRepository{
     }
 
     @Override
-    public void delete(Post post, MultipartFile file) throws IOException {
-        fileService.deleteFile(file.getOriginalFilename());
+    public void delete(Post post, String fileName) throws IOException {
+        //fileService.deleteFile(file.getOriginalFilename());
+        Files.delete(Paths.get(fileName));
         repository.delete(post);
     }
 

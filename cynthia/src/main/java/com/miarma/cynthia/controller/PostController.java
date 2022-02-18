@@ -8,7 +8,6 @@ import com.miarma.cynthia.users.dto.posts.GetPostDto;
 import com.miarma.cynthia.users.dto.posts.PostDtoConverter;
 import com.miarma.cynthia.users.model.UserEntity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -64,11 +63,14 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id, @RequestPart("file") MultipartFile file,
-                                    @RequestPart("post") CreatePostDto createPostDto) throws ChangeSetPersister.NotFoundException, IOException {
-        Post post = postRepo.findById(id).orElseThrow(ChangeSetPersister.NotFoundException::new);
-        postService.delete(post, file);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deletePost (@PathVariable Long id) throws IOException {
+
+        if (postRepo.findById(id).isEmpty()){
+            return ResponseEntity.notFound().build();
+        }else{
+            postService.delete(postRepo.findById(id).get(), postRepo.findById(id).get().getDocument());
+            return ResponseEntity.noContent().build();
+        }
     }
 
     /*@PutMapping("/{id}")
@@ -79,7 +81,7 @@ public class PostController {
         if(post == null){
             return ResponseEntity.notFound().build();
         }else{
-         //Post edit = postService.edit(post, createPostDto, file);
+            Post edit = postService.edit(post, createPostDto, file);
             return ResponseEntity.status(HttpStatus.CREATED).body(postDtoConverter.convertPostToGetPostDto(edit));
         }
     }*/
