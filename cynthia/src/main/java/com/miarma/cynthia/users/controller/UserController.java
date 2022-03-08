@@ -1,12 +1,10 @@
 package com.miarma.cynthia.users.controller;
 
-import com.miarma.cynthia.models.Follow;
 import com.miarma.cynthia.security.dto.JwtUserResponse;
 import com.miarma.cynthia.security.dto.LoginDto;
 import com.miarma.cynthia.security.jwt.JwtProvider;
 import com.miarma.cynthia.service.FollowService;
 import com.miarma.cynthia.users.dto.follow.FollowDtoConverter;
-import com.miarma.cynthia.users.dto.follow.GetFollowDto;
 import com.miarma.cynthia.users.dto.users.CreateUserDto;
 import com.miarma.cynthia.users.dto.users.GetUserDto;
 import com.miarma.cynthia.users.dto.users.UserDtoConverter;
@@ -24,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
+@CrossOrigin
 @RequiredArgsConstructor
 public class UserController {
 
@@ -34,6 +33,7 @@ public class UserController {
     private final FollowService followService;
     private final FollowDtoConverter followDtoConverter;
 
+    @CrossOrigin
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
 
