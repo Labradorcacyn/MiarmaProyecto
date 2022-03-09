@@ -16,5 +16,6 @@ import java.util.UUID;
 public interface PostRepository {
     Post save(CreatePostDto createPostDto, MultipartFile file, UserEntity user) throws Exception;
     void delete(Post post, String fileName) throws IOException;
+    void deleteById(Long id);
     Post edit(ResponseEntity<GetPostDto> post, CreatePostDto createPostDto, MultipartFile file);
 }

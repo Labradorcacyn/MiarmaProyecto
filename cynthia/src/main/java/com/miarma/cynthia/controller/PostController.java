@@ -62,14 +62,16 @@ public class PostController {
         return ResponseEntity.ok().body(postRepo.findAllPosts(user.getId()).stream().map(p->postDtoConverter.convertPostToGetPostDto(p)).collect(Collectors.toList()));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePost (@PathVariable Long id) throws IOException {
-
-        if (postRepo.findById(id).isEmpty()){
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> deletePost(@PathVariable Long id) {
+        if (postRepo.findById(id).isEmpty()) {
             return ResponseEntity.notFound().build();
-        }else{
-            postService.delete(postRepo.findById(id).get(), postRepo.findById(id).get().getDocument());
+        } else {
+
+            postRepo.deleteById(id);
+
             return ResponseEntity.noContent().build();
+
         }
     }
 
